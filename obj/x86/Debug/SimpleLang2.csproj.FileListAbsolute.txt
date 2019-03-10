@@ -1,0 +1,6 @@
+D:\Учеба\2 Семестр\Compilers\Практика 2\SimpleLanguage2\bin\Debug\SimpleLang.exe
+D:\Учеба\2 Семестр\Compilers\Практика 2\SimpleLanguage2\bin\Debug\SimpleLang.pdb
+D:\Учеба\2 Семестр\Compilers\Практика 2\SimpleLanguage2\obj\x86\Debug\SimpleLang2.csprojAssemblyReference.cache
+D:\Учеба\2 Семестр\Compilers\Практика 2\SimpleLanguage2\obj\x86\Debug\SimpleLang2.csproj.CoreCompileInputs.cache
+D:\Учеба\2 Семестр\Compilers\Практика 2\SimpleLanguage2\obj\x86\Debug\SimpleLang.exe
+D:\Учеба\2 Семестр\Compilers\Практика 2\SimpleLanguage2\obj\x86\Debug\SimpleLang.pdb
