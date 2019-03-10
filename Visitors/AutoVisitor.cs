@@ -22,7 +22,7 @@ namespace SimpleLang.Visitors
             a.Id.Visit(this);
             a.Expr.Visit(this);
         }
-        public override void VisitCycleNode(CycleNode c) 
+        public override void VisitCycleNode(WhileNode c) 
         {
             c.Expr.Visit(this);
             c.Stat.Visit(this);

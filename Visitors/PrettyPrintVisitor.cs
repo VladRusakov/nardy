@@ -46,7 +46,7 @@ namespace SimpleLang.Visitors
             Text += " := ";
             a.Expr.Visit(this);
         }
-        public override void VisitCycleNode(CycleNode c) 
+        public override void VisitCycleNode(WhileNode c) 
         {
             Text += IndentStr() + "cycle ";
             c.Expr.Visit(this);
