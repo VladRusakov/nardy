@@ -1,38 +1,15 @@
 %{
 // Ёти объ€влени€ добавл€ютс€ в класс GPPGParser, представл€ющий собой парсер, генерируемый системой gppg
-    public BlockNode root; //  орневой узел синтаксического дерева 
-    public Parser(AbstractScanner<ValueType, LexLocation> scanner) : base(scanner) { }
-	private bool InDefSect = false;
+    public Parser(AbstractScanner<int, LexLocation> scanner) : base(scanner) { }
 %}
 
 %output = SimpleYacc.cs
 
-%union { 
-			public double dVal; 
-			public int iVal; 
-			public string sVal; 
-			public Node nVal;
-			public ExprNode eVal;
-			public StatementNode stVal;
-			public BlockNode blVal;
-       }
-
-%using System.IO;
-%using ProgramTree;
-
 %namespace SimpleParser
 
-%start progr
-
-%token BEGIN END CYCLE ASSIGN ASSIGNPLUS ASSIGNMINUS ASSIGNMULT SEMICOLON WRITE VAR PLUS MINUS MULT DIV LPAREN RPAREN COLUMN
-%token <iVal> INUM 
-%token <dVal> RNUM 
-%token <sVal> ID
-
-%type <eVal> expr ident T F 
-%type <stVal> statement assign block cycle write empty var varlist 
-%type <blVal> stlist block
-
+%token INUM RNUM BOOL ID ASSIGN COMMA SEMICOLON RBRACE LBRACE LPAREN RPAREN IF ELSE PLUS MINUS 
+%token LCROCHET RCROCHET MULT DIV FOR TO WHILE OR NOT AND PRINTLN TYPEINUM TYPERNUM TYPEBOOL
+%token LESS GREATER GEQUEAL LEQUEAL NEQUEAL EQUEAL
 %%
 
 progr   : block { root = $1; }
@@ -42,78 +19,95 @@ stlist	: statement
 			{ 
 				$$ = new BlockNode($1); 
 			}
-		| stlist SEMICOLON statement 
+		| stlist statement 
 			{ 
 				$1.Add($3); 
 				$$ = $1; 
 			}
 		;
 
-statement: assign { $$ = $1; }
-		| block   { $$ = $1; }
-		| cycle   { $$ = $1; }
-		| write   { $$ = $1; }
-		| var     { $$ = $1; }
-		| empty   { $$ = $1; }
+statement: assign SEMICOLON { $$ = $1; }
+		| block   SEMICOLON { $$ = $1; }
+		| ifstat 			{ $$ = $1; }
+		| forstat 			{ $$ = $1; }
+		| while 			{ $$ = $1; }
+		| println SEMICOLON { $$ = $1; }
+		| vardef SEMICOLON 	{ $$ = $1; }
 		;
 
-empty	: { $$ = new EmptyNode(); }
-		;
-	
-ident 	: ID 
-		{
-			if (!InDefSect)
-				if (!SymbolTable.vars.ContainsKey($1))
-					throw new Exception("("+@1.StartLine+","+@1.StartColumn+"): ѕеременна€ "+$1+" не описана");
-			$$ = new IdNode($1); 
-		}	
-	;
-	
 assign 	: ident ASSIGN expr { $$ = new AssignNode($1 as IdNode, $3); }
 		;
 
-expr	: expr PLUS T { $$ = new BinOpNode($1,$3,'+'); }
-		| expr MINUS T { $$ = new BinOpNode($1,$3,'-'); }
-		| T { $$ = $1; }
+block	: LBRACE stlist RBRACE { $$ = $2; }
 		;
 		
-T 		: T MULT F { $$ = new BinOpNode($1,$3,'*'); }
-		| T DIV F { $$ = new BinOpNode($1,$3,'/'); }
-		| F { $$ = $1; }
-		;
-		
-F 		: ident  { $$ = $1 as IdNode; }
-		| INUM { $$ = new IntNumNode($1); }
-		| LPAREN expr RPAREN { $$ = $2; }
-		;
-
-block	: BEGIN stlist END { $$ = $2; }
-		;
-
-cycle	: CYCLE expr statement { $$ = new CycleNode($2,$3); }
-		;
-		
-write	: WRITE LPAREN expr RPAREN { $$ = new WriteNode($3); }
-		;
-		
-var		: VAR { InDefSect = true; } varlist 
-		{ 
-			foreach (var v in ($3 as VarDefNode).vars)
-				SymbolTable.NewVarDef(v.Name, type.tint);
-			InDefSect = false;	
-		}
-		;
-
-varlist	: ident 
-		{ 
-			$$ = new VarDefNode($1 as IdNode); 
-		}
-		| varlist COLUMN ident 
-		{ 
-			($1 as VarDefNode).Add($3 as IdNode);
-			$$ = $1;
-		}
+ifstat : IF LPAREN expr RPAREN block { $$ = new IfNode($3, $5,null); }
+	|IF LPAREN expr RPAREN block ELSE block { $$ = new IfNode($3, $5, $7); }
+	;
+	
+forstat : FOR LPAREN expr TO INUM RPAREN block
 		;
 	
-%%
+while 	: WHILE LPAREN expr RPAREN block
+		;
 
+println : PRINTLN expr
+		;
+
+ident 	: ID
+		| ID LCROCHET expr RCROCHET
+		;
+
+vardef	: typename varlist
+		;
+		
+typename: TYPEINUM
+		| TYPERNUM
+		| TYPEBOOL
+		;
+
+varlist	: ident
+		| varlist COMMA ident
+		;
+
+expr 	: A
+		| expr OR A
+		;
+
+A 		: compare 
+		| A AND compare
+		;
+
+compare : arithm
+		| arithm relation arithm
+		;
+		
+relation: LESS
+		| GREATER 
+		| GEQUEAL 
+		| LEQUEAL 
+		| NEQUEAL 
+		| EQUEAL
+		;
+		
+arithm 	: T	
+		| arithm PLUS T { $$ = new BinOpNode($1,$3,'+'); }
+		| arithm MINUS T { $$ = new BinOpNode($1,$3,'-'); }
+		;
+		
+T    	: N
+		| T MULT N { $$ = new BinOpNode($1,$3,'*'); }
+		| T DIV N { $$ = new BinOpNode($1,$3,'/'); }
+		;
+
+N 		: F 
+		| NOT F { $$ = new UnaryNode($2,'!'); }
+		;
+	
+F    	: ident
+		| INUM 
+		| RNUM
+		| BOOL
+		| LPAREN expr RPAREN
+		;
+%%

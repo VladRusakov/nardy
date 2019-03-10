@@ -7,6 +7,7 @@
 Alpha 	[a-zA-Z_]
 Digit   [0-9] 
 AlphaDigit {Alpha}|{Digit}
+BOOLVAL true|false
 INTNUM  {Digit}+
 REALNUM {INTNUM}\.{INTNUM}
 ID {Alpha}{AlphaDigit}* 
@@ -14,41 +15,53 @@ ID {Alpha}{AlphaDigit}*
 %%
 
 {INTNUM} { 
-  yylval.iVal = int.Parse(yytext); 
   return (int)Tokens.INUM; 
 }
 
 {REALNUM} { 
-  yylval.dVal = double.Parse(yytext); 
   return (int)Tokens.RNUM;
+}
+
+{BOOLVAL} { 
+  return (int)Tokens.BOOL; 
 }
 
 {ID}  { 
   int res = ScannerHelper.GetIDToken(yytext);
-  if (res == (int)Tokens.ID)
-	yylval.sVal = yytext;
   return res;
 }
 
-":=" { return (int)Tokens.ASSIGN; }
-";" { return (int)Tokens.SEMICOLON; }
-"-=" { return (int)Tokens.ASSIGNMINUS; }
-"+=" { return (int)Tokens.ASSIGNPLUS; }
-"*=" { return (int)Tokens.ASSIGNMULT; }
-"+" { return (int)Tokens.PLUS; }
-"-" { return (int)Tokens.MINUS; }
-"*" { return (int)Tokens.MULT; }
-"/" { return (int)Tokens.DIV; }
-"(" { return (int)Tokens.LPAREN; }
-")" { return (int)Tokens.RPAREN; }
-"," { return (int)Tokens.COLUMN; }
+"=" { return (int)Tokens.ASSIGN; }
+";"  { return (int)Tokens.SEMICOLON; }
+"+"  { return (int)Tokens.PLUS; }
+"-"  { return (int)Tokens.MINUS; }
+"*"  { return (int)Tokens.MULT; }
+"/"  { return (int)Tokens.DIV; }
+"("  { return (int)Tokens.LPAREN; }
+")"  { return (int)Tokens.RPAREN; }
+"{"  { return (int)Tokens.LBRACE; }
+"}"  { return (int)Tokens.RBRACE; }
+"||"  { return (int)Tokens.OR; }
+"!"  { return (int)Tokens.NOT; }
+"&&"  { return (int)Tokens.AND; }
+"<"  { return (int)Tokens.LESS; }
+">"  { return (int)Tokens.GREATER; }
+"=="  { return (int)Tokens.EQUEAL; }
+"!="  { return (int)Tokens.NEQUEAL; }
+">="  { return (int)Tokens.GEQUEAL; }
+"<="  { return (int)Tokens.LEQUEAL; }
+"["  { return (int)Tokens.LCROCHET; }
+"]"  { return (int)Tokens.RCROCHET; }
+","  { return (int)Tokens.COMMA; }
+
 
 [^ \r\n] {
 	LexError();
+	return (int)Tokens.EOF; // конец разбора
 }
 
 %{
-  yylloc = new LexLocation(tokLin, tokCol, tokELin, tokECol);
+  yylloc = new LexLocation(tokLin, tokCol, tokELin, tokECol); // позиция символа (терминального или нетерминального), возвращаемая @1 @2 и т.д.
 %}
 
 %%
@@ -62,8 +75,8 @@ public override void yyerror(string format, params object[] args) // обработка с
 
 public void LexError()
 {
-  string errorMsg = string.Format("({0},{1}): Неизвестный символ {2}", yyline, yycol, yytext);
-  throw new LexException(errorMsg);
+	string errorMsg = string.Format("({0},{1}): Неизвестный символ {2}", yyline, yycol, yytext);
+    throw new LexException(errorMsg);
 }
 
 class ScannerHelper 
@@ -73,18 +86,20 @@ class ScannerHelper
   static ScannerHelper() 
   {
     keywords = new Dictionary<string,int>();
-    keywords.Add("begin",(int)Tokens.BEGIN);
-    keywords.Add("end",(int)Tokens.END);
-    keywords.Add("cycle",(int)Tokens.CYCLE);
-    keywords.Add("write",(int)Tokens.WRITE);
-    keywords.Add("var",(int)Tokens.VAR);
+    keywords.Add("for",(int)Tokens.FOR);
+	keywords.Add("to",(int)Tokens.TO);
+	keywords.Add("while",(int)Tokens.WHILE);
+	keywords.Add("if",(int)Tokens.IF);
+	keywords.Add("Println",(int)Tokens.PRINTLN);
+	keywords.Add("real",(int)Tokens.TYPERNUM);
+	keywords.Add("int",(int)Tokens.TYPEINUM);
+	keywords.Add("bool",(int)Tokens.TYPEBOOL);
   }
   public static int GetIDToken(string s)
   {
-	if (keywords.ContainsKey(s.ToLower()))
-	  return keywords[s];
-	else
+    if (keywords.ContainsKey(s.ToLower())) // язык нечувствителен к регистру
+      return keywords[s];
+    else
       return (int)Tokens.ID;
   }
-  
 }
