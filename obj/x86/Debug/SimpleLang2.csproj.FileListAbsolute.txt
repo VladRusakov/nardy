@@ -8,3 +8,7 @@ C:\Compilers\Практика 2\SimpleLanguage2\obj\x86\Debug\SimpleLang2.csproj
 C:\Compilers\Практика 2\SimpleLanguage2\obj\x86\Debug\SimpleLang2.csproj.CoreCompileInputs.cache
 C:\Compilers\Практика 2\SimpleLanguage2\obj\x86\Debug\SimpleLang.exe
 C:\Compilers\Практика 2\SimpleLanguage2\obj\x86\Debug\SimpleLang.pdb
+C:\Users\Nikita\source\repos\opt comp\nardy\obj\x86\Debug\SimpleLang2.csprojAssemblyReference.cache
+C:\Users\Nikita\source\repos\opt comp\nardy\obj\x86\Debug\SimpleLang2.csproj.CoreCompileInputs.cache
+C:\Users\Nikita\source\repos\opt comp\nardy\obj\x86\Debug\SimpleLang.exe
+C:\Users\Nikita\source\repos\opt comp\nardy\obj\x86\Debug\SimpleLang.pdb

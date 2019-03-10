@@ -45,6 +45,12 @@
   <ItemGroup>
     <Compile Include="Visitors\AssignCountVisitor.cs" />
     <Compile Include="Visitors\AutoVisitor.cs" />
+    <Compile Include="Visitors\MaxOpInExprVisitor.cs" />
+    <Compile Include="Visitors\NestedLoopInIfVisitor.cs" />
+    <Compile Include="Visitors\NestedIfInLoopVisitor.cs" />
+    <Compile Include="Visitors\MaxLoopDeepVisitor.cs" />
+    <Compile Include="Visitors\NestedLoopVisitor.cs" />
+    <Compile Include="Visitors\OpCountVisitor.cs" />
     <Compile Include="Visitors\PrettyPrintVisitor.cs" />
     <Compile Include="Visitors\Visitor.cs" />
     <Compile Include="Main.cs" />

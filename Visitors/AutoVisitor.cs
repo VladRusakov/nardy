@@ -16,23 +16,36 @@ namespace SimpleLang.Visitors
             binop.Left.Visit(this);
             binop.Right.Visit(this);
         }
+
+        public override void VisitUnaryOpNode(UnaryOpNode unaryOp)
+        {
+            unaryOp.Expr.Visit(this);
+        }
+
         public override void VisitAssignNode(AssignNode a) 
         {
             // для каких-то визиторов порядок может быть обратный - вначале обойти выражение, потом - идентификатор
             a.Id.Visit(this);
             a.Expr.Visit(this);
         }
-        public override void VisitCycleNode(CycleNode c) 
+        public override void VisitWhileNode(WhileNode c) 
         {
             c.Expr.Visit(this);
-            c.Stat.Visit(this);
+            c.Block.Visit(this);
         }
+
+        public override void VisitForNode(ForNode c)
+        {
+            c.Expr.Visit(this);
+            c.Block.Visit(this);
+        }
+
         public override void VisitBlockNode(BlockNode bl) 
         {
             foreach (var st in bl.StList)
                 st.Visit(this);
         }
-        public override void VisitWriteNode(WriteNode w) 
+        public override void VisitPrintNode(PrintNode w) 
         {
             w.Expr.Visit(this);
         }
@@ -41,5 +54,13 @@ namespace SimpleLang.Visitors
             foreach (var v in w.vars)
                 v.Visit(this);
         }
+        
+        public override void VisitIfNode(IfNode c)
+        {
+            c.Expr.Visit(this);
+            c.BlockIf.Visit(this);
+            c.BlockElse?.Visit(this);
+        }
+       
     }
 }

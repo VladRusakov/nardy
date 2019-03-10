@@ -50,7 +50,7 @@ namespace ProgramTree
         public RealNumNode(double num) { Num = num; }
         public override void Visit(Visitor v)
         {
-            throw new System.NotImplementedException();
+            v.VisitRealNumNode(this);
         }
     }
 
@@ -60,7 +60,7 @@ namespace ProgramTree
         public BooleanNode(bool value) { Value = value; }
         public override void Visit(Visitor v)
         {
-            throw new System.NotImplementedException();
+            v.VisitBooleanNode(this);
         }
     }
 
@@ -94,7 +94,7 @@ namespace ProgramTree
 
         public override void Visit(Visitor v)
         {
-            throw new System.NotImplementedException();
+            v.VisitUnaryOpNode(this);
         }
     }
 
@@ -133,7 +133,7 @@ namespace ProgramTree
         }
         public override void Visit(Visitor v)
         {
-            v.VisitCycleNode(this);
+            v.VisitWhileNode(this);
         }
     }
 
@@ -148,7 +148,8 @@ namespace ProgramTree
         }
         public override void Visit(Visitor v)
         {
-            throw new System.NotImplementedException();
+            v.VisitForNode(this);
+
         }
     }
 
@@ -165,7 +166,7 @@ namespace ProgramTree
         }
         public override void Visit(Visitor v)
         {
-            throw new System.NotImplementedException();
+            v.VisitIfNode(this);
         }
     }
 
@@ -186,16 +187,16 @@ namespace ProgramTree
         }
     }
 
-    public class PrintlnNode : StatementNode
+    public class PrintNode : StatementNode
     {
         public ExprNode Expr { get; set; }
-        public PrintlnNode(ExprNode Expr)
+        public PrintNode(ExprNode Expr)
         {
             this.Expr = Expr;
         }
         public override void Visit(Visitor v)
         {
-            v.VisitWriteNode(this);
+            v.VisitPrintNode(this);
         }
     }
 
@@ -219,6 +220,7 @@ namespace ProgramTree
         {
             vars.Add(id);
         }
+
         public override void Visit(Visitor v)
         {
             v.VisitVarDefNode(this);

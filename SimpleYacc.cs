@@ -230,7 +230,7 @@ public class Parser: ShiftReduceParser<ValueType, LexLocation>
 { CurrentSemanticValue.blVal = ValueStack[ValueStack.Depth-2].blVal; }
         break;
       case 24: // cycle -> CYCLE, expr, statement
-{ CurrentSemanticValue.stVal = new CycleNode(ValueStack[ValueStack.Depth-2].eVal,ValueStack[ValueStack.Depth-1].stVal); }
+{ CurrentSemanticValue.stVal = new WhileNode(ValueStack[ValueStack.Depth-2].eVal,ValueStack[ValueStack.Depth-1].stVal); }
         break;
       case 25: // write -> WRITE, LPAREN, expr, RPAREN
 { CurrentSemanticValue.stVal = new WriteNode(ValueStack[ValueStack.Depth-2].eVal); }
