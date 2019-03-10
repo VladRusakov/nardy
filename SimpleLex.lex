@@ -46,10 +46,10 @@ ID {Alpha}{AlphaDigit}*
 "&&"  { return (int)Tokens.AND; }
 "<"  { return (int)Tokens.LESS; }
 ">"  { return (int)Tokens.GREATER; }
-"=="  { return (int)Tokens.EQUEAL; }
-"!="  { return (int)Tokens.NEQUEAL; }
-">="  { return (int)Tokens.GEQUEAL; }
-"<="  { return (int)Tokens.LEQUEAL; }
+"=="  { return (int)Tokens.EQUAL; }
+"!="  { return (int)Tokens.NEQUAL; }
+">="  { return (int)Tokens.GEQUAL; }
+"<="  { return (int)Tokens.LEQUAL; }
 "["  { return (int)Tokens.LCROCHET; }
 "]"  { return (int)Tokens.RCROCHET; }
 ","  { return (int)Tokens.COMMA; }
