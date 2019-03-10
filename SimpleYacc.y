@@ -41,21 +41,24 @@ assign 	: ident ASSIGN expr { $$ = new AssignNode($1 as IdNode, $3); }
 block	: LBRACE stlist RBRACE { $$ = $2; }
 		;
 		
-ifstat : IF LPAREN expr RPAREN block { $$ = new IfNode($3, $5,null); }
+ifstat : IF LPAREN expr RPAREN block { $$ = new IfNode($3, $5, null); }
 	|IF LPAREN expr RPAREN block ELSE block { $$ = new IfNode($3, $5, $7); }
 	;
 	
 forstat : FOR LPAREN expr TO INUM RPAREN block
+			{$$ = new ForNode($3, $5, $7); }
 		;
 	
 while 	: WHILE LPAREN expr RPAREN block
+		{$$ = new WhileNode($3, $5); }
 		;
 
 println : PRINTLN expr
+		{$$ = new PrintNode($2);}
 		;
 
 ident 	: ID
-		| ID LCROCHET expr RCROCHET
+		//| ID LCROCHET expr RCROCHET
 		;
 
 vardef	: typename varlist
@@ -103,8 +106,12 @@ T    	: N
 N 		: F 
 		| NOT F { $$ = new UnaryNode($2,'!'); }
 		;
+
+F 		: E
+		| MINUS ELSE { $$ = new UnaryNode($2,'-');}
+		;
 	
-F    	: ident
+E    	: ident
 		| INUM 
 		| RNUM
 		| BOOL
