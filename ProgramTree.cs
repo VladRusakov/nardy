@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using SimpleLang.Visitors;
 
 namespace ProgramTree
@@ -14,7 +12,6 @@ namespace ProgramTree
 
     public abstract class ExprNode : Node // базовый класс для всех выражений
     {
-        
     }
 
     public class IdNode : ExprNode
@@ -25,9 +22,17 @@ namespace ProgramTree
         {
             v.VisitIdNode(this);
         }
-
-        public override string ToString() => this.Name;
     }
+
+    //public class IdArrayNode : ExprNode
+    //{
+    //    public string Name { get; set; }
+    //    public IdArrayNode(string name) { Name = name; }
+    //    public override void Visit(Visitor v)
+    //    {
+    //        throw new System.NotImplementedException();
+    //    }
+    //}
 
     public class IntNumNode : ExprNode
     {
@@ -37,7 +42,26 @@ namespace ProgramTree
         {
             v.VisitIntNumNode(this);
         }
-        public override string ToString() => Num.ToString();
+    }
+
+    public class RealNumNode : ExprNode
+    {
+        public double Num { get; set; }
+        public RealNumNode(double num) { Num = num; }
+        public override void Visit(Visitor v)
+        {
+            v.VisitRealNumNode(this);
+        }
+    }
+
+    public class BooleanNode : ExprNode
+    {
+        public bool Value { get; set; }
+        public BooleanNode(bool value) { Value = value; }
+        public override void Visit(Visitor v)
+        {
+            v.VisitBooleanNode(this);
+        }
     }
 
     public class BinOpNode : ExprNode
@@ -45,7 +69,7 @@ namespace ProgramTree
         public ExprNode Left { get; set; }
         public ExprNode Right { get; set; }
         public char Op { get; set; }
-        public BinOpNode(ExprNode Left, ExprNode Right, char op) 
+        public BinOpNode(ExprNode Left, ExprNode Right, char op)
         {
             this.Left = Left;
             this.Right = Right;
@@ -55,9 +79,27 @@ namespace ProgramTree
         {
             v.VisitBinOpNode(this);
         }
-
-        public override string ToString() => Left.ToString() + Op + Right.ToString();
     }
+
+    public class UnaryOpNode : ExprNode
+    {
+        public char Op { get; set; }
+        public ExprNode Expr { get; set; }
+
+        public UnaryOpNode(ExprNode expr, char op)
+        {
+            Expr = expr;
+            Op = op;
+        }
+
+        public override void Visit(Visitor v)
+        {
+            v.VisitUnaryOpNode(this);
+        }
+    }
+
+
+
 
     public abstract class StatementNode : Node // базовый класс для всех операторов
     {
@@ -78,23 +120,54 @@ namespace ProgramTree
         {
             v.VisitAssignNode(this);
         }
-        public override string ToString() => Id + "=" + Expr.ToString();// + Environment.NewLine;
     }
 
-    public class CycleNode : StatementNode
+    public class WhileNode : StatementNode
     {
         public ExprNode Expr { get; set; }
-        public StatementNode Stat { get; set; }
-        public CycleNode(ExprNode expr, StatementNode stat)
+        public BlockNode Block { get; set; }
+        public WhileNode(ExprNode expr, BlockNode block)
         {
             Expr = expr;
-            Stat = stat;
+            Block = block;
         }
         public override void Visit(Visitor v)
         {
-            v.VisitCycleNode(this);
+            v.VisitWhileNode(this);
         }
-        public override string ToString() => "cycle " + Expr.ToString() + "\n" + Stat.ToString();
+    }
+
+    public class ForNode : StatementNode
+    {
+        public ExprNode Expr { get; set; }
+        public BlockNode Block { get; set; }
+        public ForNode(ExprNode expr, BlockNode block)
+        {
+            Expr = expr;
+            Block = block;
+        }
+        public override void Visit(Visitor v)
+        {
+            v.VisitForNode(this);
+
+        }
+    }
+
+    public class IfNode : StatementNode
+    {
+        public ExprNode Expr { get; set; }
+        public BlockNode BlockIf { get; set; }
+        public BlockNode BlockElse { get; set; }
+        public IfNode(ExprNode expr, BlockNode blockIf, BlockNode blockElse)
+        {
+            Expr = expr;
+            BlockIf = blockIf;
+            BlockElse = blockElse;
+        }
+        public override void Visit(Visitor v)
+        {
+            v.VisitIfNode(this);
+        }
     }
 
     public class BlockNode : StatementNode
@@ -112,23 +185,19 @@ namespace ProgramTree
         {
             v.VisitBlockNode(this);
         }
-        public override string ToString() => "begin" + StList
-            .Select(el => !(el is EmptyNode) ? Environment.NewLine + el.ToString() + (el is CycleNode? "" : ";") : "")
-            .Aggregate((s1, s2) => s1 + s2).ToString() + "\nend";
     }
 
-    public class WriteNode : StatementNode
+    public class PrintNode : StatementNode
     {
         public ExprNode Expr { get; set; }
-        public WriteNode(ExprNode Expr)
+        public PrintNode(ExprNode Expr)
         {
             this.Expr = Expr;
         }
         public override void Visit(Visitor v)
         {
-            v.VisitWriteNode(this);
+            v.VisitPrintNode(this);
         }
-        public override string ToString() => "write (" + Expr.ToString() + ")";
     }
 
     public class EmptyNode : StatementNode
@@ -137,7 +206,6 @@ namespace ProgramTree
         {
             v.VisitEmptyNode(this);
         }
-        public override string ToString() => "";
     }
 
     public class VarDefNode : StatementNode
@@ -152,12 +220,10 @@ namespace ProgramTree
         {
             vars.Add(id);
         }
+
         public override void Visit(Visitor v)
         {
             v.VisitVarDefNode(this);
         }
-        public override string ToString() => "var " + vars
-            .Select(el => el.ToString())
-            .Aggregate((v1, v2) => v1 + ", " + v2);
     }
 }

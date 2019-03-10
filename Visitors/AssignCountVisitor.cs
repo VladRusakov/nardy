@@ -13,7 +13,7 @@ namespace SimpleLang.Visitors
         {
             Count += 1;
         }
-        public override void VisitWriteNode(WriteNode w) 
+        public override void VisitPrintNode(PrintNode w) 
         {
         }
         public override void VisitVarDefNode(VarDefNode w)
