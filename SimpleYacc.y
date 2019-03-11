@@ -123,22 +123,12 @@ T    	: N { $$ = $1; }
 		| T DIV N  { $$ = new BinOpNode($1,$3,TypeOperation.Div); }
 		;
 
-<<<<<<< HEAD
 N 		: F { $$ = $1; }
 		| NOT F { $$ = new UnaryNode($2, TypeOperation.Not); }
 		;
 
 F 		: E { $$ = $1; }
 		| MINUS E { $$ = new UnaryNode($2, TypeOperation.UMinus);}
-=======
-N 		: F 
-		| NOT F { $$ = new UnaryOpNode($2,'!'); }
-		;
-
-F 		: E
-		| MINUS ELSE { $$ = new UnaryOpNode($2,'-');}
->>>>>>> 764fd0cae4e6c1f320f9ec9131983325e95f937d
-		;
 	
 E    	: ident { $$ = $1 as IdNode; }
 		| INUM  { $$ = new IntNumNode($1); }
