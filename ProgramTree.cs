@@ -3,7 +3,8 @@ using SimpleLang.Visitors;
 
 namespace ProgramTree
 {
-    public enum AssignType { Assign, AssignPlus, AssignMinus, AssignMult, AssignDivide };
+    public enum TypeOperation { Or, And, Less, Greater, GEqual, LEqual,
+    NEqual, Equal, Plus, Minus, Mult, Div, Not, UMinus};
 
     public abstract class Node // базовый класс для всех узлов    
     {
@@ -68,8 +69,8 @@ namespace ProgramTree
     {
         public ExprNode Left { get; set; }
         public ExprNode Right { get; set; }
-        public char Op { get; set; }
-        public BinOpNode(ExprNode Left, ExprNode Right, char op)
+        public TypeOperation Op { get; set; }
+        public BinOpNode(ExprNode Left, ExprNode Right, TypeOperation op)
         {
             this.Left = Left;
             this.Right = Right;
@@ -83,10 +84,10 @@ namespace ProgramTree
 
     public class UnaryOpNode : ExprNode
     {
-        public char Op { get; set; }
+        public TypeOperation Op { get; set; }
         public ExprNode Expr { get; set; }
 
-        public UnaryOpNode(ExprNode expr, char op)
+        public UnaryOpNode(ExprNode expr, TypeOperation op)
         {
             Expr = expr;
             Op = op;
@@ -109,12 +110,10 @@ namespace ProgramTree
     {
         public IdNode Id { get; set; }
         public ExprNode Expr { get; set; }
-        public AssignType AssOp { get; set; }
-        public AssignNode(IdNode id, ExprNode expr, AssignType assop = AssignType.Assign)
+        public AssignNode(IdNode id, ExprNode expr)
         {
             Id = id;
             Expr = expr;
-            AssOp = assop;
         }
         public override void Visit(Visitor v)
         {
@@ -139,11 +138,13 @@ namespace ProgramTree
 
     public class ForNode : StatementNode
     {
-        public ExprNode Expr { get; set; }
+        public ExprNode ExprStart { get; set; }
+        public ExprNode ExprEnd { get; set; }
         public BlockNode Block { get; set; }
-        public ForNode(ExprNode expr, BlockNode block)
+        public ForNode(ExprNode exprStart, ExprNode exprEnd, BlockNode block)
         {
-            Expr = expr;
+            ExprStart = exprStart;
+            ExprEnd = exprEnd;
             Block = block;
         }
         public override void Visit(Visitor v)

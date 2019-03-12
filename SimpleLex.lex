@@ -15,19 +15,24 @@ ID {Alpha}{AlphaDigit}*
 %%
 
 {INTNUM} { 
-  return (int)Tokens.INUM; 
+	yylval.iVal = int.Parse(yytext);
+	return (int)Tokens.INUM; 
 }
 
 {REALNUM} { 
-  return (int)Tokens.RNUM;
+	yylval.dVal = double.Parse(yytext);
+	return (int)Tokens.RNUM;
 }
 
 {BOOLVAL} { 
-  return (int)Tokens.BOOL; 
+	yylval.bVal = bool.Parse(yytext);
+	return (int)Tokens.BOOL; 
 }
 
 {ID}  { 
   int res = ScannerHelper.GetIDToken(yytext);
+  if(res == (int)Tokens.ID)
+	  yylval.sVal = yytext;
   return res;
 }
 
@@ -90,7 +95,7 @@ class ScannerHelper
 	keywords.Add("to",(int)Tokens.TO);
 	keywords.Add("while",(int)Tokens.WHILE);
 	keywords.Add("if",(int)Tokens.IF);
-	keywords.Add("Println",(int)Tokens.PRINTLN);
+	keywords.Add("println",(int)Tokens.PRINTLN);
 	keywords.Add("real",(int)Tokens.TYPERNUM);
 	keywords.Add("int",(int)Tokens.TYPEINUM);
 	keywords.Add("bool",(int)Tokens.TYPEBOOL);

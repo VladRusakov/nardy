@@ -1,15 +1,46 @@
 %{
 // Ёти объ€влени€ добавл€ютс€ в класс GPPGParser, представл€ющий собой парсер, генерируемый системой gppg
-    public Parser(AbstractScanner<int, LexLocation> scanner) : base(scanner) { }
+    public BlockNode root; //  орневой узел синтаксического дерева 
+    public Parser(AbstractScanner<ValueType, LexLocation> scanner) : base(scanner) { }
+	private bool InDefSect = false;
 %}
 
 %output = SimpleYacc.cs
 
+%union	{
+			public int iVal;
+			public double dVal;
+			public bool bVal;
+			public string sVal;
+			public Node nVal;
+			public ExprNode eVal;
+			public StatementNode stVal;
+			public BlockNode blVal;
+			public TypeOperation opVal;
+			public type tVal;
+		}
+
+%using System.IO;
+%using ProgramTree;
+
 %namespace SimpleParser
 
-%token INUM RNUM BOOL ID ASSIGN COMMA SEMICOLON RBRACE LBRACE LPAREN RPAREN IF ELSE PLUS MINUS 
+%start progr
+
+%token ASSIGN COMMA SEMICOLON RBRACE LBRACE LPAREN RPAREN IF ELSE PLUS MINUS 
 %token LCROCHET RCROCHET MULT DIV FOR TO WHILE OR NOT AND PRINTLN TYPEINUM TYPERNUM TYPEBOOL
 %token LESS GREATER GEQUAL LEQUAL NEQUAL EQUAL
+
+%token <iVal> INUM
+%token <dVal> RNUM
+%token <bVal> BOOL
+%token <sVal> ID
+
+%type <eVal> expr ident A compare arithm T N F E 
+%type <stVal> statement assign ifstat forstat while println vardef varlist
+%type <blVal> stlist block
+%type <opVal> relation
+%type <tVal> typename
 %%
 
 progr   : block { root = $1; }
@@ -21,7 +52,7 @@ stlist	: statement
 			}
 		| stlist statement 
 			{ 
-				$1.Add($3);
+				$1.Add($2);
 				$$ = $1; 
 			}
 		;
@@ -45,7 +76,7 @@ ifstat : IF LPAREN expr RPAREN block { $$ = new IfNode($3, $5, null); }
 	|IF LPAREN expr RPAREN block ELSE block { $$ = new IfNode($3, $5, $7); }
 	;
 	
-forstat : FOR LPAREN expr TO INUM RPAREN block
+forstat : FOR LPAREN expr TO expr RPAREN block
 			{$$ = new ForNode($3, $5, $7); }
 		;
 	
@@ -62,8 +93,7 @@ ident 	: ID
 				if (!SymbolTable.vars.ContainsKey($1))
 					throw new Exception("("+@1.StartLine+","+@1.StartColumn+"): ѕеременна€ "+$1+" не описана");
 			$$ = new IdNode($1); 
-			//| ID LCROCHET expr RCROCHET
-		}	
+		}
 		;
 
 vardef	: typename { InDefSect = true; } varlist
@@ -74,9 +104,9 @@ vardef	: typename { InDefSect = true; } varlist
 		}
 		;
 		
-typename: TYPEINUM { $$ = TypeData.Inum; }
-		| TYPERNUM { $$ = TypeData.Real; }
-		| TYPEBOOL { $$ = TypeData.Bool; }
+typename: TYPEINUM { $$ = type.tint; }
+		| TYPERNUM { $$ = type.tdouble; }
+		| TYPEBOOL { $$ = type.tbool; }
 		;
 
 varlist	: ident 		
@@ -101,7 +131,7 @@ A 		: compare { $$ = $1; }
 compare : arithm { $$ = $1; }
 		| arithm relation arithm 
 		{
-			$$ = new BinOpNode($1, $3, $2)
+			$$ = new BinOpNode($1, $3, $2);
 		}
 		;
 		
@@ -124,11 +154,12 @@ T    	: N { $$ = $1; }
 		;
 
 N 		: F { $$ = $1; }
-		| NOT F { $$ = new UnaryNode($2, TypeOperation.Not); }
+		| NOT F { $$ = new UnaryOpNode($2, TypeOperation.Not); }
 		;
 
 F 		: E { $$ = $1; }
-		| MINUS E { $$ = new UnaryNode($2, TypeOperation.UMinus);}
+		| MINUS E { $$ = new UnaryOpNode($2, TypeOperation.UMinus);}
+		;
 	
 E    	: ident { $$ = $1 as IdNode; }
 		| INUM  { $$ = new IntNumNode($1); }

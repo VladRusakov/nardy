@@ -36,7 +36,8 @@ namespace SimpleLang.Visitors
 
         public override void VisitForNode(ForNode c)
         {
-            c.Expr.Visit(this);
+            c.ExprStart.Visit(this);
+            c.ExprEnd.Visit(this);
             c.Block.Visit(this);
         }
 
