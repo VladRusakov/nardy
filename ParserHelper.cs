@@ -4,7 +4,7 @@ using System;
 namespace SimpleParser
 {
 
-    public enum type { tint, tdouble };
+    public enum type { tint, tdouble, tbool };
 
     public static class SymbolTable // Таблица символов
     {
