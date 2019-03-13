@@ -14,3 +14,5 @@ C:\Users\Nikita\source\repos\opt comp\nardy\obj\x86\Debug\SimpleLang.exe
 C:\Users\Nikita\source\repos\opt comp\nardy\obj\x86\Debug\SimpleLang.pdb
 C:\Compilers\Практика 2\SimpleLanguage2\bin\Debug\SimpleLang.exe
 C:\Compilers\Практика 2\SimpleLanguage2\bin\Debug\SimpleLang.pdb
+C:\Users\Nikita\source\repos\opt comp\nardy\bin\Debug\SimpleLang.exe
+C:\Users\Nikita\source\repos\opt comp\nardy\bin\Debug\SimpleLang.pdb

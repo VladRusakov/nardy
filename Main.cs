@@ -30,9 +30,19 @@ namespace SimpleCompiler
                 {
                     Console.WriteLine("Синтаксическое дерево построено");
 
-                    var avis = new AssignCountVisitor();
-                    var r = parser.root;
-                    Console.WriteLine(r);
+                    var fillParentVsitor = new FillParentVisitor();
+                    parser.root.Visit(fillParentVsitor);
+
+
+                    var optVisitior = new OptVisitor();
+                    parser.root.Visit(optVisitior);
+
+                    var pepeVisitor = new PrettyPrintVisitor();
+                    parser.root.Visit(pepeVisitor);
+                    Console.WriteLine(pepeVisitor.Text);
+                  
+
+
                     //.Visit(avis);
                     //Console.WriteLine("Количество присваиваний = {0}", avis.Count);
                     //Console.WriteLine("-------------------------------");

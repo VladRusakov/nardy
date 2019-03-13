@@ -2,10 +2,28 @@
   int a,b,d;
   b = 2;
   a = 3;
-  a = a * 4 + b;
+  a = a * (4 + b);
+
+  a = 1 * b;
+  b = b / 1;
+
+  if (true) 
+  {
+    if (b == a)
+    {
+       b = a;
+    }
+    a = b;
+  }
+
   while(3 != (a < b))
   {
     a = false;
     println a;
+    
+    while(a != b) 
+    {
+      a = b;
+    }
   }
 }
