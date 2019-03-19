@@ -34,8 +34,29 @@ namespace SimpleCompiler
                     parser.root.Visit(fillParentVsitor);
 
 
-                    var optVisitior = new OptVisitor();
-                    parser.root.Visit(optVisitior);
+
+                    var opt1Visitor = new OptVisitor();
+                    var opt14Visitor = new OptWhileVisitor();
+
+                    bool isPerformed = true;
+                    while (isPerformed)
+                    {
+                        parser.root.Visit(opt14Visitor);
+                        while ((isPerformed = opt14Visitor.IsPerformed))
+                        {
+                            opt14Visitor.IsPerformed = false;
+                            parser.root.Visit(opt14Visitor);
+                        }
+
+                        parser.root.Visit(opt1Visitor);
+                        if (!opt1Visitor.IsPerformed) break;     
+
+                    }
+
+
+                  //  while(!opt14Visitor.IsPerformed)
+
+                   // parser.root.Visit(optVisitior);
 
                     var pepeVisitor = new PrettyPrintVisitor();
                     parser.root.Visit(pepeVisitor);

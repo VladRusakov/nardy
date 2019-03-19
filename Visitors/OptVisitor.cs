@@ -8,6 +8,7 @@ namespace SimpleLang.Visitors
 {
     class OptVisitor : AutoVisitor
     {
+        public bool IsPerformed { get; set; }
         public void ReplaceExpr(ExprNode from, ExprNode to)
         {
             var p = from.Parent;
@@ -31,26 +32,30 @@ namespace SimpleLang.Visitors
 
         public override void VisitBinOpNode(BinOpNode binop)
         {
-            if (binop.Op == ProgramTree.TypeOperation.Mult 
+            IsPerformed = false;
+            if (binop.Op == ProgramTree.TypeOperation.Mult
+                 && binop.Right is IntNumNode innRight
+                 && innRight.Num == 1)
+            {
+                binop.Left.Visit(this);
+                ReplaceExpr(binop, binop.Left);
+                IsPerformed = true;
+            }
+            else if (binop.Op == ProgramTree.TypeOperation.Mult 
                 && binop.Left is IntNumNode innLeft
                 && innLeft.Num == 1)
             {
                 binop.Right.Visit(this);
                 ReplaceExpr(binop, binop.Right);
+                IsPerformed = true;
             }
-            else if (binop.Op == ProgramTree.TypeOperation.Mult
-                 && binop.Right is IntNumNode innRight
-                 && innRight.Num == 1)
-            {
-                binop.Right.Visit(this);
-                ReplaceExpr(binop, binop.Left);
-            } 
             else if (binop.Op == ProgramTree.TypeOperation.Div
                      && binop.Right is IntNumNode innRightDiv
                      && innRightDiv.Num == 1)
             {
-                binop.Right.Visit(this);
+                binop.Left.Visit(this);
                 ReplaceExpr(binop, binop.Left);
+                IsPerformed = true;
             }
             else
             {

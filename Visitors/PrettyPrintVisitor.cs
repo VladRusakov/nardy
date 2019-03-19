@@ -111,9 +111,10 @@ namespace SimpleLang.Visitors
             var Count = bl.StList.Count;
 
             if (Count > 0)
-                bl.StList[0].Visit(this);
+                bl.StList[0]?.Visit(this);
             for (var i = 1; i < Count; i++)
             {
+                if (bl.StList[i] == null) continue;
                 Text += ';';
                 if (!(bl.StList[i] is EmptyNode))
                     Text += Environment.NewLine;
